@@ -132,7 +132,8 @@ Please see the testsuite for this class for more examples of the sorts of transa
                        
                        # http layer implementation if different from default
                        http_impl=None,
-                       ca_certs=None):
+                       ca_certs=None,
+                       disable_ssl_certificate_validation=False):
         """
 Creates a new Connection object.
 
@@ -219,7 +220,8 @@ Loading in a locally held Service Document:
         # set the http layer
         if http_impl is None:
             conn_l.info("Loading default HTTP layer")
-            self.h = http_layer.HttpLib2Layer(".cache", timeout=30.0, ca_certs=ca_certs)
+            self.h = http_layer.HttpLib2Layer(".cache", timeout=30.0, ca_certs=ca_certs, 
+                                              disable_ssl_certificate_validation=disable_ssl_certificate_validation)
         else:
             conn_l.info("Using provided HTTP layer")
             self.h = http_impl
