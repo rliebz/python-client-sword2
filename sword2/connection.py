@@ -9,6 +9,8 @@ See http://sword-app.svn.sourceforge.net/viewvc/sword-app/spec/trunk/SWORDProfil
 about the SWORD2 AtomPub profile.
  
 """
+from __future__ import unicode_literals
+
 from sword2_logging import logging
 conn_l = logging.getLogger(__name__)
 
@@ -294,7 +296,7 @@ Loading in a locally held Service Document:
         4XX not listed:
             Will throw a general `sword2.exceptions.HTTPResponseError` exception
         """
-        conn_l.debug("Error body received from server: " + str(content))
+        conn_l.debug("Error body received from server: " + unicode(content))
         
         if resp['status'] == 401:
             conn_l.error("You are unauthorised (401) to access this document on the server. Check your username/password credentials and your 'On Behalf Of'")
@@ -401,7 +403,7 @@ Loading in a locally held Service Document:
         elif resp['status'] == 401:
             conn_l.error("You are unauthorised (401) to access this document on the server. Check your username/password credentials")
         else:
-            conn_l.error("Unexpected response status: " + str(resp['status']))
+            conn_l.error("Unexpected response status: " + unicode(resp['status']))
         
     def reset_transaction_history(self):
         """ Clear the transaction history - `self.history`"""
@@ -490,17 +492,17 @@ Loading in a locally held Service Document:
         
         # request-level headers
         headers = {}
-        headers['In-Progress'] = str(in_progress).lower()
+        headers['In-Progress'] = unicode(in_progress).lower()
         if on_behalf_of:
             headers['On-Behalf-Of'] = on_behalf_of
         elif self.on_behalf_of:
             headers['On-Behalf-Of'] = self.on_behalf_of
             
         if suggested_identifier:
-            headers['Slug'] = str(suggested_identifier)
+            headers['Slug'] = unicode(suggested_identifier)
             
         if metadata_relevant:
-            headers['Metadata-Relevant'] = str(metadata_relevant).lower()
+            headers['Metadata-Relevant'] = unicode(metadata_relevant).lower()
         
         self._t.start(request_type)
         if empty:
@@ -531,8 +533,8 @@ Loading in a locally held Service Document:
         elif metadata_entry and not (filename and payload):
             # Metadata-only resource creation
             headers['Content-Type'] = "application/atom+xml;type=entry"
-            data = str(metadata_entry)
-            headers['Content-Length'] = str(len(data))
+            data = unicode(metadata_entry)
+            headers['Content-Length'] = unicode(len(data))
             
             resp, content = self.h.request(target_iri, method, headers=headers, payload=data)
             _, took_time = self._t.time_since_start(request_type)
@@ -547,15 +549,15 @@ Loading in a locally held Service Document:
             
         elif metadata_entry and filename and payload:
             # Multipart resource creation
-            my_headers = {"Content-MD5" : str(md5sum)}
+            my_headers = {"Content-MD5" : unicode(md5sum)}
             if packaging is not None:
-                my_headers['Packaging'] = str(packaging)
+                my_headers['Packaging'] = unicode(packaging)
             multicontent_type, payload_data = create_multipart_related([{'key':'atom',
                                                                     'type':'application/atom+xml; charset="utf-8"',
-                                                                    'data':str(metadata_entry),  # etree default is utf-8
+                                                                    'data':unicode(metadata_entry),  # etree default is utf-8
                                                                     },
                                                                     {'key':'payload',
-                                                                    'type':str(mimetype),
+                                                                    'type':unicode(mimetype),
                                                                     'filename':filename,
                                                                     'data':payload,  
                                                                     'headers':my_headers
@@ -563,7 +565,7 @@ Loading in a locally held Service Document:
                                                                    ])
                                                                    
             headers['Content-Type'] = multicontent_type + '; type="application/atom+xml"'
-            headers['Content-Length'] = str(len(payload_data))    # must be str, not int type
+            headers['Content-Length'] = unicode(len(payload_data))    # must be str, not int type
             resp, content = self.h.request(target_iri, method, headers=headers, payload=payload_data)
             _, took_time = self._t.time_since_start(request_type)
             if self.history:
@@ -577,20 +579,20 @@ Loading in a locally held Service Document:
                                                'type':'application/atom+xml; charset="utf-8"'
                                               },
                                               {'key':'payload',
-                                               'type':str(mimetype),
+                                               'type':unicode(mimetype),
                                                'filename':filename,
-                                               'headers':{'Content-MD5':str(md5sum),
-                                                          'Packaging':str(packaging),
+                                               'headers':{'Content-MD5':unicode(md5sum),
+                                                          'Packaging':unicode(packaging),
                                                          }
                                                }],   # record just the headers used in multipart construction
                                  process_duration = took_time)
         elif filename and payload:
-            headers['Content-Type'] = str(mimetype)
-            headers['Content-MD5'] = str(md5sum)
-            headers['Content-Length'] = str(f_size)
+            headers['Content-Type'] = unicode(mimetype)
+            headers['Content-MD5'] = unicode(md5sum)
+            headers['Content-Length'] = unicode(f_size)
             headers['Content-Disposition'] = "attachment; filename=%s" % urllib.quote(filename)
             if packaging is not None:
-                headers['Packaging'] = str(packaging)
+                headers['Packaging'] = unicode(packaging)
             
             resp, content = self.h.request(target_iri, method, headers=headers, payload=payload)
             _, took_time = self._t.time_since_start(request_type)
@@ -961,7 +963,7 @@ response_headers, etc)
                                   packaging=packaging,
                                   on_behalf_of=on_behalf_of,
                                   in_progress=in_progress,
-                                  metadata_relevant=str(metadata_relevant),
+                                  metadata_relevant=unicode(metadata_relevant),
                                   method="PUT",
                                   request_type=request_type,
                                   md5sum=md5sum)
@@ -1426,7 +1428,7 @@ response_headers, etc)
                                   packaging=packaging,
                                   on_behalf_of=on_behalf_of,
                                   method="PUT",
-                                  metadata_relevant=str(metadata_relevant),
+                                  metadata_relevant=unicode(metadata_relevant),
                                   request_type='EM_IRI PUT',
                                   md5sum=md5sum)
 
@@ -1610,7 +1612,7 @@ response_headers, etc)
                                   packaging=packaging,
                                   on_behalf_of=on_behalf_of,
                                   in_progress=in_progress,
-                                  metadata_relevant=str(metadata_relevant),
+                                  metadata_relevant=unicode(metadata_relevant),
                                   method="PUT",
                                   request_type='Edit_IRI PUT',
                                   md5sum=md5sum)
@@ -1751,7 +1753,7 @@ Response:
             conn_l.info("IRI GET resource '%s' with Accept-Packaging:%s" % (content_iri, packaging))
         else:
             conn_l.info("IRI GET resource '%s'" % content_iri)
-        conn_l.debug("Using headers: " + str(headers))
+        conn_l.debug("Using headers: " + unicode(headers))
         resp, content = self.h.request(content_iri, "GET", headers=headers)
         _, took_time = self._t.time_since_start("IRI GET resource")
         if self.history:

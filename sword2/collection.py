@@ -13,6 +13,7 @@ Two other classes, `Collection_Feed` and `Sword_Statement` are works in progress
 for the things they logically handle.
 
 """
+from __future__ import unicode_literals
 
 from sword2_logging import logging
 from implementation_info import __version__
@@ -194,9 +195,9 @@ class SDCollection(object):
         self.acceptPackaging = get_text(collection, NS['sword'] % 'acceptPackaging', plural = True)
         
         # Log collection details:
-        coll_l.debug(str(self))
+        coll_l.debug(unicode(self))
     
-    def __str__(self):
+    def __unicode__(self):
         """Provides a simple display of the pertinent information in this object suitable for CLI logging."""
         _s = ["Collection: '%s' @ '%s'. Accept:%s" % (self.title, self.href, self.accept)]
         if self.description:
@@ -212,7 +213,7 @@ class SDCollection(object):
         if self.service:
             _s.append("SWORD: Nested Service Documents - '%s'" % self.service)
         for c in self.categories:
-            _s.append(str(c))
+            _s.append(unicode(c))
         return "\n".join(_s)
 
     def __repr__(self):
