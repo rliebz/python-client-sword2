@@ -126,7 +126,7 @@ Please see the testsuite for this class for more examples of the sorts of transa
                        on_behalf_of=None,
                        download_service_document = False,   # Don't automagically GET the SD_IRI by default
                        keep_history=True,
-                       cache_deposit_receipts=True,
+                       cache_deposit_receipts=False,
                        honour_receipts=True,
                        error_response_raises_exceptions=True,
                        
