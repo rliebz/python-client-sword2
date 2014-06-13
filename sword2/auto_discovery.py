@@ -20,7 +20,7 @@ class AutoDiscovery(sgmllib.SGMLParser):
         
         if http_impl is None:
             ad_l.info("Loading default HTTP layer")
-            self.http = http_layer.HttpLib2Layer(".cache", timeout=30.0)
+            self.http = http_layer.HttpLib2Layer(timeout=30.0)
         else:
             ad_l.info("Using provided HTTP layer")
             self.http = http_impl
